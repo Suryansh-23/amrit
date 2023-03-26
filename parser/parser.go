@@ -66,6 +66,7 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerPrefix(token.MINUS, p.parsePrefixExpression)
 	p.registerPrefix(token.TRUE_LATIN, p.parseBoolean)
 	p.registerPrefix(token.FALSE_LATIN, p.parseBoolean)
+	p.registerPrefix(token.LPAREN, p.parseGroupedExpression)
 
 	p.infixParseFns = make(map[token.TokenType]infixParseFn)
 
@@ -238,6 +239,18 @@ func (p *Parser) parseInfixExpression(left ast.Expression) ast.Expression {
 func (p *Parser) noPrefixParseFnError(t token.TokenType) {
 	msg := fmt.Sprintf("no prefix parse function for %s found", t)
 	p.errors = append(p.errors, msg)
+}
+
+func (p *Parser) parseGroupedExpression() ast.Expression {
+	p.nextToken()
+
+	exp := p.parseExpression(LOWEST)
+
+	if !p.expectPeek(token.RPAREN) {
+		return nil
+	}
+
+	return exp
 }
 
 func (p *Parser) curTokenIs(t token.TokenType) bool {
