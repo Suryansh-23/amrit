@@ -154,9 +154,11 @@ func (p *Parser) parseLetStatement() *ast.LetStatement {
 	if !p.expectPeek(token.ASSIGN) {
 		return nil
 	}
-	// TODO: We're skipping the expressions until we
-	// encounter a term
-	for !p.curTokenIs(token.TERM) {
+
+	p.nextToken()
+	stmt.Value = p.parseExpression(LOWEST)
+
+	if p.peekTokenIs(token.TERM) {
 		p.nextToken()
 	}
 	return stmt
@@ -167,9 +169,9 @@ func (p *Parser) parseReturnStatement() *ast.ReturnStatement {
 
 	p.nextToken()
 
-	// TODO: We're skipping the expressions until we
-	// encounter a term
-	for !p.curTokenIs(token.TERM) {
+	stmt.ReturnValue = p.parseExpression(LOWEST)
+
+	if p.peekTokenIs(token.TERM) {
 		p.nextToken()
 	}
 
@@ -382,9 +384,11 @@ func (p *Parser) parseCallArguments() []ast.Expression {
 func (p *Parser) curTokenIs(t token.TokenType) bool {
 	return p.curToken.Type == t
 }
+
 func (p *Parser) peekTokenIs(t token.TokenType) bool {
 	return p.peekToken.Type == t
 }
+
 func (p *Parser) expectPeek(t token.TokenType) bool {
 	if p.peekTokenIs(t) {
 		p.nextToken()
