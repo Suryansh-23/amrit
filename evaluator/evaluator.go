@@ -1,8 +1,6 @@
 package evaluator
 
 import (
-	"fmt"
-
 	"github.com/Suryansh-23/amrit/ast"
 	"github.com/Suryansh-23/amrit/object"
 )
@@ -97,8 +95,13 @@ func evalInfixExpression(operator string, left object.Object, right object.Objec
 	case left.Type() == object.INTEGER_OBJ && right.Type() == object.INTEGER_OBJ:
 		return evalIntegerInfixExpression(operator, left, right)
 	case operator == "==":
+		left := left.(*object.Boolean).Value
+		right := right.(*object.Boolean).Value
+		// fmt.Println(left, right, left == right, object.Boolean{Value: false} == object.Boolean{Value: false})
 		return nativeBoolToBooleanObject(left == right)
 	case operator == "!=":
+		left := left.(*object.Boolean).Value
+		right := right.(*object.Boolean).Value
 		return nativeBoolToBooleanObject(left != right)
 	default:
 		return NULL
@@ -139,7 +142,7 @@ func evalIfExpression(ie *ast.IfExpression) object.Object {
 	} else if ie.Alternative != nil {
 		return Eval(ie.Alternative)
 	} else {
-		fmt.Println("returning NULL")
+		// fmt.Println("returning NULL")
 		return NULL
 	}
 }
