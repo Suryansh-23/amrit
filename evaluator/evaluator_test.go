@@ -157,3 +157,27 @@ func testNullObject(t *testing.T, obj object.Object) bool {
 	}
 	return true
 }
+
+func TestReturnStatements(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected int64
+	}{
+		{"labh 10 |", 10},
+		{"labh 10 | 9 |", 10},
+		{"labh 2 * 5 | 9 |", 10},
+		{"9 | labh 2 * 5 | 9 |", 10},
+		{`agar (10 > 1) {
+			agar (10 > 1) {
+				labh 10 |
+			}
+
+			labh 1 | 
+		}
+		`, 10},
+	}
+	for _, tt := range tests {
+		evaluated := testEval(tt.input)
+		testIntegerObject(t, evaluated, tt.expected)
+	}
+}
