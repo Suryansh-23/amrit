@@ -7,6 +7,7 @@ import (
 
 	"github.com/Suryansh-23/amrit/evaluator"
 	"github.com/Suryansh-23/amrit/lexer"
+	"github.com/Suryansh-23/amrit/object"
 	"github.com/Suryansh-23/amrit/parser"
 )
 
@@ -15,6 +16,7 @@ const PROMPT = ">>> "
 // scans the prompt input until eol and starts up the lexer for it
 func Start(in io.Reader, out io.Writer) {
 	scanner := bufio.NewScanner(in)
+	env := object.NewEnvironment()
 
 	for {
 		fmt.Printf(PROMPT)
@@ -33,7 +35,7 @@ func Start(in io.Reader, out io.Writer) {
 			continue
 		}
 
-		evaluated := evaluator.Eval(program)
+		evaluated := evaluator.Eval(program, env)
 		if evaluated != nil {
 			io.WriteString(out, evaluated.Inspect())
 			io.WriteString(out, "\n")
