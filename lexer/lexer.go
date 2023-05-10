@@ -119,7 +119,7 @@ func newToken(tokenType token.TokenType, ch rune) token.Token {
 // reads through a valid continuous var name or keyword until it ends
 func (l *Lexer) readIdentifier() string {
 	position := l.position
-	for isLetter(l.ch) {
+	for isLetter(l.ch) || isDigit(l.ch) {
 		l.readChar()
 	}
 

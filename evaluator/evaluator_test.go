@@ -209,17 +209,19 @@ func TestErrorHandling(t *testing.T) {
 			"unknown operator: BOOLEAN + BOOLEAN",
 		},
 		{
-			"if (10 > 1) { satya + asatya| }",
+			"agar (10 > 1) { satya + asatya| }",
 			"unknown operator: BOOLEAN + BOOLEAN",
 		},
 		{
-			`agar (10 > 1) {
-		agar (10 > 1) {
-		labh satya + asatya |
-		}
-		labh 1 |
-		}
-		`,
+			`
+agar (10 > 1) {
+	agar (10 > 1) {
+		labh satya + asatya|
+	}
+	
+	labh 1|
+}
+`,
 			"unknown operator: BOOLEAN + BOOLEAN",
 		},
 		{
@@ -255,4 +257,54 @@ func TestLetStatements(t *testing.T) {
 	for _, tt := range tests {
 		testIntegerObject(t, testEval(tt.input), tt.expected)
 	}
+}
+
+func TestFunctionObject(t *testing.T) {
+	input := "karya (x) { x + 2 | } |"
+	evaluated := testEval(input)
+
+	fn, ok := evaluated.(*object.Function)
+	if !ok {
+		t.Fatalf("object is not Function. got=%T (%+v)", evaluated, evaluated)
+	}
+	if len(fn.Parameters) != 1 {
+		t.Fatalf("function has wrong parameters. Parameters=%+v",
+			fn.Parameters)
+	}
+	if fn.Parameters[0].String() != "x" {
+		t.Fatalf("parameter is not 'x'. got=%q", fn.Parameters[0])
+	}
+
+	expectedBody := "(x + 2)"
+	if fn.Body.String() != expectedBody {
+		t.Fatalf("body is not %q. got=%q", expectedBody, fn.Body.String())
+	}
+}
+
+func TestFunctionApplication(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected int64
+	}{
+		{"mana identity = karya(x) { x | } | identity(5) |", 5},
+		{"mana identity = karya(x) { labh x | } | identity(5) |", 5},
+		{"mana double = karya(x) { x * 2 | } | double(5) |", 10},
+		{"mana add = karya(x, y) { x + y | } | add(5, 5) |", 10},
+		{"mana add = karya(x, y) { x + y | } | add(5 + 5, add(5, 5)) |", 20},
+		{"karya(x) { x | }(5)", 5},
+	}
+
+	for _, tt := range tests {
+		testIntegerObject(t, testEval(tt.input), tt.expected)
+	}
+}
+
+func TestClosures(t *testing.T) {
+	input := `
+mana newAdder = karya(x) {
+	karya(y) { x + y }|
+}|
+mana addTwo = newAdder(2)|
+addTwo(2)|`
+	testIntegerObject(t, testEval(input), 4)
 }
