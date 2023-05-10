@@ -24,6 +24,8 @@ agar (5 < 10) {
 
 10 == 10|
 10 != 9|
+"haanji"
+"acha thik hai"
 `
 
 	tests := []struct {
@@ -104,6 +106,8 @@ agar (5 < 10) {
 		{token.NOT_EQ, "!="},
 		{token.INT, "9"},
 		{token.TERM, "|"},
+		{token.STRING, "haanji"},
+		{token.STRING, "acha thik hai"},
 		{token.EOF, ""},
 	}
 	l := New(input)
