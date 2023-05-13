@@ -20,6 +20,7 @@ const (
 	FUNCTION_OBJ     = "FUNCTION"
 	BUILTIN_OBJ      = "BUILTIN"
 	ARRAY_OBJ        = "ARRAY"
+	SLICE_OBJ        = "SLICE"
 )
 
 type Object interface {
@@ -120,9 +121,9 @@ func (f *Function) Inspect() string {
 	out.WriteString("karya")
 	out.WriteString("(")
 	out.WriteString(strings.Join(params, ", "))
-	out.WriteString(") {\n")
+	out.WriteString(") { ")
 	out.WriteString(f.Body.String())
-	out.WriteString("\n}")
+	out.WriteString(" }")
 
 	return out.String()
 }
@@ -152,6 +153,24 @@ func (ao *Array) Inspect() string {
 	out.WriteString("[")
 	out.WriteString(strings.Join(elements, ", "))
 	out.WriteString("]")
+
+	return out.String()
+}
+
+type Slice struct {
+	Left  Object
+	Right Object
+}
+
+func (s *Slice) Type() ObjectType { return SLICE_OBJ }
+func (s *Slice) Inspect() string {
+	var out bytes.Buffer
+
+	out.WriteString("(")
+	out.WriteString(s.Left.Inspect())
+	out.WriteString(" : ")
+	out.WriteString(s.Right.Inspect())
+	out.WriteString(")")
 
 	return out.String()
 }

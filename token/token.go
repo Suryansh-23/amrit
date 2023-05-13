@@ -32,6 +32,7 @@ const (
 	// Delimiters
 	COMMA    = ","
 	TERM     = "|"
+	COLON    = ":"
 	LPAREN   = "("
 	RPAREN   = ")"
 	LBRACE   = "{"

@@ -19,6 +19,7 @@ const (
 	PREFIX      // -X or !X
 	CALL        // myFunction(X)
 	INDEX
+	SLICE
 )
 
 var precedences = map[token.TokenType]int{
@@ -32,6 +33,7 @@ var precedences = map[token.TokenType]int{
 	token.ASTERISK: PRODUCT,
 	token.LPAREN:   CALL,
 	token.LBRACKET: INDEX,
+	token.COLON:    SLICE,
 }
 
 type (
@@ -86,7 +88,8 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerInfix(token.LT, p.parseInfixExpression)
 	p.registerInfix(token.GT, p.parseInfixExpression)
 	p.registerInfix(token.LPAREN, p.parseCallExpression)
-	p.registerInfix(token.LBRACKET, p.parseIndexExpression)
+	p.registerInfix(token.LBRACKET, p.parseIndexSliceExpression)
+	p.registerInfix(token.COLON, p.parseSliceExpression)
 
 	p.nextToken()
 	p.nextToken()
@@ -245,6 +248,20 @@ func (p *Parser) parseInfixExpression(left ast.Expression) ast.Expression {
 		Token:    p.curToken,
 		Operator: p.curToken.Literal,
 		Left:     left,
+	}
+
+	precedence := p.curPrecedence()
+	p.nextToken()
+
+	expression.Right = p.parseExpression(precedence)
+
+	return expression
+}
+
+func (p *Parser) parseSliceExpression(left ast.Expression) ast.Expression {
+	expression := &ast.SliceExpression{
+		Token: p.curToken,
+		Left:  left,
 	}
 
 	precedence := p.curPrecedence()
@@ -426,11 +443,18 @@ func (p *Parser) parseExpressionList(end token.TokenType) []ast.Expression {
 	return list
 }
 
-func (p *Parser) parseIndexExpression(left ast.Expression) ast.Expression {
-	exp := &ast.IndexExpression{Token: p.curToken, Left: left}
+func (p *Parser) parseIndexSliceExpression(left ast.Expression) ast.Expression {
+	var exp ast.Expression
+	tmp := p.curToken
 
 	p.nextToken()
-	exp.Index = p.parseExpression(LOWEST)
+	inBracket := p.parseExpression(LOWEST)
+
+	if slice, ok := inBracket.(*ast.SliceExpression); ok {
+		exp = &ast.SliceArrayExpression{Token: slice.Token, Left: left, Slice: *slice}
+	} else {
+		exp = &ast.IndexExpression{Token: tmp, Left: left, Index: inBracket}
+	}
 
 	if !p.expectPeek(token.RBRACKET) {
 		return nil

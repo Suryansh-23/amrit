@@ -314,3 +314,44 @@ func (ie *IndexExpression) String() string {
 
 	return out.String()
 }
+
+type SliceExpression struct {
+	Token token.Token // the ':' token
+	Left  Expression
+	Right Expression
+}
+
+func (se *SliceExpression) expressionNode()      {}
+func (se *SliceExpression) TokenLiteral() string { return se.Token.Literal }
+func (se *SliceExpression) String() string {
+	var out bytes.Buffer
+
+	out.WriteString("(")
+	out.WriteString(se.Left.String() + " ")
+	out.WriteString(se.Token.Literal)
+	out.WriteString(" " + se.Right.String())
+	out.WriteString(")")
+
+	return out.String()
+}
+
+type SliceArrayExpression struct {
+	Token token.Token
+	Left  Expression
+	Slice SliceExpression
+}
+
+func (se *SliceArrayExpression) expressionNode()       {}
+func (sae *SliceArrayExpression) TokenLiteral() string { return sae.Token.Literal }
+func (sae *SliceArrayExpression) String() string {
+	var out bytes.Buffer
+
+	out.WriteString("(")
+	out.WriteString(sae.Left.String())
+	out.WriteString("[")
+	out.WriteString(sae.Slice.String())
+	out.WriteString("]")
+	out.WriteString(")")
+
+	return out.String()
+}

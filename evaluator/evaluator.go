@@ -72,6 +72,18 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		}
 
 		return &object.Array{Elements: elements}
+	case *ast.SliceExpression:
+		left := Eval(node.Left, env)
+		if isError(left) {
+			return left
+		}
+
+		right := Eval(node.Right, env)
+		if isError(right) {
+			return right
+		}
+		return &object.Slice{Left: left, Right: right}
+
 	case *ast.IndexExpression:
 		left := Eval(node.Left, env)
 		if isError(left) {
@@ -84,6 +96,18 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		}
 
 		return evalIndexExpression(left, index)
+	case *ast.SliceArrayExpression:
+		left := Eval(node.Left, env)
+		if isError(left) {
+			return left
+		}
+
+		slice := Eval(&node.Slice, env)
+		if isError(slice) {
+			return slice
+		}
+
+		return evalSliceExpression(left, slice)
 	case *ast.PrefixExpression:
 		right := Eval(node.Right, env)
 		if isError(right) {
@@ -381,4 +405,26 @@ func evalArrayIndexExpression(arr, index object.Object) object.Object {
 	}
 
 	return arrObj.Elements[idx]
+}
+
+func evalSliceExpression(left, slice object.Object) object.Object {
+	switch {
+	case left.Type() == object.ARRAY_OBJ && slice.Type() == object.SLICE_OBJ:
+		return evalArraySliceExpression(left, slice)
+	default:
+		return newError("slice operator not supported %s", left.Type())
+	}
+}
+
+func evalArraySliceExpression(arr, slice object.Object) object.Object {
+	arrObj := arr.(*object.Array)
+	left := slice.(*object.Slice).Left.(*object.Integer).Value
+	right := slice.(*object.Slice).Right.(*object.Integer).Value
+	max := int64(len(arrObj.Elements))
+
+	if left < 0 || max < left || right < 0 || max < right || left > right {
+		return NULL
+	}
+
+	return &object.Array{Elements: arrObj.Elements[left:right]}
 }
