@@ -30,12 +30,14 @@ const (
 	NOT_EQ   = "!="
 
 	// Delimiters
-	COMMA  = ","
-	TERM   = "|"
-	LPAREN = "("
-	RPAREN = ")"
-	LBRACE = "{"
-	RBRACE = "}"
+	COMMA    = ","
+	TERM     = "|"
+	LPAREN   = "("
+	RPAREN   = ")"
+	LBRACE   = "{"
+	RBRACE   = "}"
+	LBRACKET = "["
+	RBRACKET = "]"
 
 	// Keywords
 	//LATIN

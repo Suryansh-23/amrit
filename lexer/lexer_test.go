@@ -26,6 +26,7 @@ agar (5 < 10) {
 10 != 9|
 "haanji"
 "acha thik hai"
+[1,2]|
 `
 
 	tests := []struct {
@@ -108,6 +109,12 @@ agar (5 < 10) {
 		{token.TERM, "|"},
 		{token.STRING, "haanji"},
 		{token.STRING, "acha thik hai"},
+		{token.LBRACKET, "["},
+		{token.INT, "1"},
+		{token.COMMA, ","},
+		{token.INT, "2"},
+		{token.RBRACKET, "]"},
+		{token.TERM, "|"},
 		{token.EOF, ""},
 	}
 	l := New(input)
