@@ -17,6 +17,8 @@ var builtins = map[string]*object.Builtin{
 			switch arg := args[0].(type) {
 			case *object.String:
 				return &object.Integer{Value: int64(len(arg.Value))}
+			case *object.Array:
+				return &object.Integer{Value: int64(len(arg.Elements))}
 			default:
 				return newError("argument to `lambai` not supported, got %s",
 					args[0].Type())
@@ -26,7 +28,7 @@ var builtins = map[string]*object.Builtin{
 	"print": {
 		Fn: func(args ...object.Object) object.Object {
 			for _, arg := range args {
-				if arg.Type() != object.STRING_OBJ && arg.Type() != object.INTEGER_OBJ && arg.Type() != object.BOOLEAN_OBJ && arg.Type() != object.NULL_OBJ {
+				if arg.Type() != object.STRING_OBJ && arg.Type() != object.INTEGER_OBJ && arg.Type() != object.BOOLEAN_OBJ && arg.Type() != object.NULL_OBJ && arg.Type() != object.ARRAY_OBJ {
 					return newError("argument `%s` of type %s not supported in `print`", arg, arg.Type())
 				}
 			}

@@ -206,14 +206,17 @@ func (ie *IfExpression) TokenLiteral() string { return ie.Token.Literal }
 func (ie *IfExpression) String() string {
 	var out bytes.Buffer
 
-	out.WriteString("agar")
+	out.WriteString("agar ")
 	out.WriteString(ie.Condition.String())
-	out.WriteString(" ")
+	out.WriteString(" { ")
 	out.WriteString(ie.Consequence.String())
+	out.WriteString(" } ")
 
 	if ie.Alternative != nil {
 		out.WriteString("varna ")
+		out.WriteString(" { ")
 		out.WriteString(ie.Alternative.String())
+		out.WriteString(" } ")
 	}
 
 	return out.String()
