@@ -49,6 +49,7 @@ const (
 	IF_LATIN     = "agar"
 	ELSE_LATIN   = "varna"
 	RETURN_LATIN = "labh"
+	WHILE_LATIN  = "jabtak"
 
 	// DEVANAGIRI
 	// FN_DEVANAGIRI     = "कार्य"
@@ -68,6 +69,7 @@ var keywords_latin = map[string]TokenType{
 	"agar":   IF_LATIN,
 	"varna":  ELSE_LATIN,
 	"labh":   RETURN_LATIN,
+	"jabtak": WHILE_LATIN,
 }
 
 var keywords_devanagiri = map[string]TokenType{
@@ -78,6 +80,7 @@ var keywords_devanagiri = map[string]TokenType{
 	"अगर":   IF_LATIN,
 	"वरना":  ELSE_LATIN,
 	"लाभ":   RETURN_LATIN,
+	"जबतक":  WHILE_LATIN,
 }
 
 var devanagiri_to_latin = map[string]string{
@@ -88,6 +91,7 @@ var devanagiri_to_latin = map[string]string{
 	"अगर":   "agar",
 	"वरना":  "varna",
 	"लाभ":   "labh",
+	"जबतक":  "jabtak",
 }
 
 func LookupIdent(ident string) TokenType {

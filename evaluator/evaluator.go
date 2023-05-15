@@ -24,6 +24,8 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		return Eval(node.Expression, env)
 	case *ast.IfExpression:
 		return evalIfExpression(node, env)
+	case *ast.WhileExpression:
+		return evalWhileExpression(node, env)
 	case *ast.ReturnStatement:
 		val := Eval(node.ReturnValue, env)
 		if isError(val) {
@@ -270,6 +272,24 @@ func evalIfExpression(ie *ast.IfExpression, env *object.Environment) object.Obje
 		// fmt.Println("returning NULL")
 		return NULL
 	}
+}
+
+func evalWhileExpression(we *ast.WhileExpression, env *object.Environment) object.Object {
+	condition := Eval(we.Condition, env)
+	if isError(condition) {
+		return condition
+	}
+
+	for isTruthy(condition) {
+		Eval(we.Body, env)
+		condition = Eval(we.Condition, env)
+
+		if isError(condition) {
+			return condition
+		}
+	}
+
+	return NULL
 }
 
 func isTruthy(obj object.Object) bool {

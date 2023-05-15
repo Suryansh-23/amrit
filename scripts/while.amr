@@ -1,0 +1,7 @@
+mana a = [1, 2, 3, 4, 5]|
+mana i = 0|
+
+jabtak (i < lambai(a)) {
+    print(a[i])|
+    mana i = i + 1|
+}
