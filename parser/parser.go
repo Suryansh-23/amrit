@@ -154,7 +154,11 @@ func (p *Parser) parseStatement() ast.Statement {
 	case token.RETURN_LATIN:
 		return p.parseReturnStatement()
 	default:
-		return p.parseExpressionStatement()
+		if p.curToken.Type == token.IDENT && p.peekToken.Type == token.ASSIGN {
+			return p.parseIdentifierReassign()
+		} else {
+			return p.parseExpressionStatement()
+		}
 	}
 }
 
@@ -165,6 +169,24 @@ func (p *Parser) parseLetStatement() *ast.LetStatement {
 		return nil
 	}
 
+	stmt.Name = &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
+
+	if !p.expectPeek(token.ASSIGN) {
+		return nil
+	}
+
+	p.nextToken()
+	stmt.Value = p.parseExpression(LOWEST)
+
+	if p.peekTokenIs(token.TERM) {
+		p.nextToken()
+	}
+
+	return stmt
+}
+
+func (p *Parser) parseIdentifierReassign() *ast.LetStatement {
+	stmt := &ast.LetStatement{Token: token.Token{Type: token.LET_LATIN, Literal: token.LET_LATIN}}
 	stmt.Name = &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
 
 	if !p.expectPeek(token.ASSIGN) {
