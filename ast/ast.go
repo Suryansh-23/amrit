@@ -64,7 +64,31 @@ func (ls *LetStatement) String() string {
 	out.WriteString("|")
 
 	return out.String()
+}
 
+type CompoundAssignmentStatement struct {
+	Token    token.Token // the token.LET token
+	Name     *Identifier
+	Operator string
+	Value    Expression
+}
+
+func (cas *CompoundAssignmentStatement) statementNode()       {}
+func (cas *CompoundAssignmentStatement) TokenLiteral() string { return cas.Token.Literal }
+func (cas *CompoundAssignmentStatement) String() string {
+	var out bytes.Buffer
+
+	out.WriteString(cas.TokenLiteral() + " ")
+	out.WriteString(cas.Name.String())
+	out.WriteString(" " + cas.Operator + " ")
+
+	if cas.Value != nil {
+		out.WriteString(cas.Value.String())
+	}
+
+	out.WriteString("|")
+
+	return out.String()
 }
 
 type Identifier struct {

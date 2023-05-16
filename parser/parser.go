@@ -154,8 +154,21 @@ func (p *Parser) parseStatement() ast.Statement {
 	case token.RETURN_LATIN:
 		return p.parseReturnStatement()
 	default:
-		if p.curToken.Type == token.IDENT && p.peekToken.Type == token.ASSIGN {
-			return p.parseIdentifierReassign()
+		if p.curToken.Type == token.IDENT {
+			switch p.peekToken.Type {
+			case token.ASSIGN:
+				return p.parseIdentifierReassign()
+			case token.PLUS_EQ:
+				return p.parseCompoundAssignment(token.PLUS_EQ)
+			case token.MINUS_EQ:
+				return p.parseCompoundAssignment(token.MINUS_EQ)
+			case token.ASTERISK_EQ:
+				return p.parseCompoundAssignment(token.ASTERISK_EQ)
+			case token.SLASH_EQ:
+				return p.parseCompoundAssignment(token.SLASH_EQ)
+			default:
+				return p.parseExpressionStatement()
+			}
 		} else {
 			return p.parseExpressionStatement()
 		}
@@ -190,6 +203,25 @@ func (p *Parser) parseIdentifierReassign() *ast.LetStatement {
 	stmt.Name = &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
 
 	if !p.expectPeek(token.ASSIGN) {
+		return nil
+	}
+
+	p.nextToken()
+	stmt.Value = p.parseExpression(LOWEST)
+
+	if p.peekTokenIs(token.TERM) {
+		p.nextToken()
+	}
+
+	return stmt
+}
+
+func (p *Parser) parseCompoundAssignment(op token.TokenType) *ast.CompoundAssignmentStatement {
+	stmt := &ast.CompoundAssignmentStatement{Token: token.Token{Type: token.LET_LATIN, Literal: token.LET_LATIN}}
+	stmt.Name = &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
+	stmt.Operator = string(op)
+
+	if !p.expectPeek(op) {
 		return nil
 	}
 

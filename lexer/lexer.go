@@ -55,11 +55,6 @@ func (l *Lexer) NextToken() token.Token {
 		} else {
 			tok = newToken(token.ASSIGN, l.ch)
 		}
-
-	case '+':
-		tok = newToken(token.PLUS, l.ch)
-	case '-':
-		tok = newToken(token.MINUS, l.ch)
 	case '!':
 		if l.peekChar() == '=' {
 			ch := l.ch
@@ -68,14 +63,54 @@ func (l *Lexer) NextToken() token.Token {
 		} else {
 			tok = newToken(token.BANG, l.ch)
 		}
+	case '+':
+		if l.peekChar() == '=' {
+			ch := l.ch
+			l.readChar()
+			tok = token.Token{Type: token.PLUS_EQ, Literal: string(ch) + string(l.ch)}
+		} else {
+			tok = newToken(token.PLUS, l.ch)
+		}
+	case '-':
+		if l.peekChar() == '=' {
+			ch := l.ch
+			l.readChar()
+			tok = token.Token{Type: token.MINUS_EQ, Literal: string(ch) + string(l.ch)}
+		} else {
+			tok = newToken(token.MINUS, l.ch)
+		}
 	case '/':
-		tok = newToken(token.SLASH, l.ch)
+		if l.peekChar() == '=' {
+			ch := l.ch
+			l.readChar()
+			tok = token.Token{Type: token.SLASH_EQ, Literal: string(ch) + string(l.ch)}
+		} else {
+			tok = newToken(token.SLASH, l.ch)
+		}
 	case '*':
-		tok = newToken(token.ASTERISK, l.ch)
+		if l.peekChar() == '=' {
+			ch := l.ch
+			l.readChar()
+			tok = token.Token{Type: token.ASTERISK_EQ, Literal: string(ch) + string(l.ch)}
+		} else {
+			tok = newToken(token.ASTERISK, l.ch)
+		}
 	case '<':
-		tok = newToken(token.LT, l.ch)
+		if l.peekChar() == '=' {
+			ch := l.ch
+			l.readChar()
+			tok = token.Token{Type: token.LT_EQ, Literal: string(ch) + string(l.ch)}
+		} else {
+			tok = newToken(token.LT, l.ch)
+		}
 	case '>':
-		tok = newToken(token.GT, l.ch)
+		if l.peekChar() == '=' {
+			ch := l.ch
+			l.readChar()
+			tok = token.Token{Type: token.GT_EQ, Literal: string(ch) + string(l.ch)}
+		} else {
+			tok = newToken(token.GT, l.ch)
+		}
 	case '|':
 		tok = newToken(token.TERM, l.ch)
 	case ':':

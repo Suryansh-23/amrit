@@ -29,6 +29,14 @@ const (
 	EQ       = "=="
 	NOT_EQ   = "!="
 
+	//Compound Operators
+	PLUS_EQ     = "+="
+	MINUS_EQ    = "-="
+	ASTERISK_EQ = "*="
+	SLASH_EQ    = "/="
+	LT_EQ       = "<="
+	GT_EQ       = ">="
+
 	// Delimiters
 	COMMA    = ","
 	TERM     = "|"

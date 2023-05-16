@@ -3,5 +3,5 @@ mana i = 0|
 
 jabtak (i < lambai(a)) {
     print(a[i])|
-    mana i = i + 1|
+    i = i + 1|
 }

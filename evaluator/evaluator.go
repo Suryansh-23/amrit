@@ -57,6 +57,18 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		}
 
 		env.Set(node.Name.Value, val)
+	case *ast.CompoundAssignmentStatement:
+		val := Eval(node.Value, env)
+		if isError(val) {
+			return val
+		}
+
+		initVal, ok := env.Get(node.Name.Value)
+		if !ok {
+			return newError("identifier not found: " + node.Name.Value)
+		}
+
+		env.Set(node.Name.Value, computeOp(node.Operator, initVal, val))
 	case *ast.Identifier:
 		return evalIdentifier(node, env)
 
@@ -447,4 +459,33 @@ func evalArraySliceExpression(arr, slice object.Object) object.Object {
 	}
 
 	return &object.Array{Elements: arrObj.Elements[left:right]}
+}
+
+func computeOp(operator string, left, right object.Object) object.Object {
+	switch {
+	case left.Type() == object.INTEGER_OBJ && right.Type() == object.INTEGER_OBJ:
+		return computeIntegerOp(operator, left, right)
+	default:
+		return newError("type mismatch: %s %s %s",
+			left.Type(), operator, right.Type())
+	}
+}
+
+func computeIntegerOp(operator string, left, right object.Object) object.Object {
+	leftVal := left.(*object.Integer).Value
+	rightVal := right.(*object.Integer).Value
+
+	switch operator {
+	case "+=":
+		return &object.Integer{Value: leftVal + rightVal}
+	case "-=":
+		return &object.Integer{Value: leftVal - rightVal}
+	case "*=":
+		return &object.Integer{Value: leftVal * rightVal}
+	case "/=":
+		return &object.Integer{Value: leftVal / rightVal}
+	default:
+		return newError("unknown operator: %s %s %s",
+			left.Type(), operator, right.Type())
+	}
 }
