@@ -1,0 +1,8 @@
+mana fib = karya (n) {
+    agar (n < 2) {
+        n|
+    } varna {
+        fib(n - 1) + fib(n - 2)|
+    }
+}
+
