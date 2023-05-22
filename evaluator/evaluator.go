@@ -142,6 +142,8 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 			return right
 		}
 		return evalInfixExpression(node.Operator, left, right)
+	case *ast.Comment:
+		return nil
 	}
 
 	return nil

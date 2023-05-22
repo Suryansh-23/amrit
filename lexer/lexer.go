@@ -84,6 +84,18 @@ func (l *Lexer) NextToken() token.Token {
 			ch := l.ch
 			l.readChar()
 			tok = token.Token{Type: token.SLASH_EQ, Literal: string(ch) + string(l.ch)}
+		} else if l.peekChar() == '/' {
+			l.readChar()
+			tok.Type = token.SINGLE_COMMENT
+			tok.Literal = "/"
+
+			//ignore the rest of the line
+			for l.ch != '\n' && l.ch != 0 {
+				tok.Literal += string(l.ch)
+				l.readChar()
+			}
+
+			return tok
 		} else {
 			tok = newToken(token.SLASH, l.ch)
 		}

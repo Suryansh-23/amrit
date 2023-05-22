@@ -421,3 +421,12 @@ func (hl *HashLiteral) String() string {
 
 	return out.String()
 }
+
+type Comment struct {
+	Token token.Token // the '//' token
+	Value string
+}
+
+func (c *Comment) expressionNode()      {}
+func (c *Comment) TokenLiteral() string { return c.Token.Literal }
+func (c *Comment) String() string       { return c.Value }

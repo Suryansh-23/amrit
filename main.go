@@ -50,7 +50,7 @@ func main() {
 		}
 
 		env := object.NewEnvironment()
-		l := lexer.New(string(string(progScript)))
+		l := lexer.New(string(progScript))
 		p := parser.New(l)
 
 		program := p.ParseProgram()

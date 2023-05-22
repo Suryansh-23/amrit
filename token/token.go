@@ -16,6 +16,8 @@ const (
 	INT    = "ANK"
 	STRING = "AKSHARMALA"
 
+	SINGLE_COMMENT = "//"
+
 	// 1343456
 	// Operators
 	ASSIGN   = "="
