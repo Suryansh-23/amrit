@@ -17,6 +17,7 @@ const (
 	STRING = "AKSHARMALA"
 
 	SINGLE_COMMENT = "//"
+	MULTI_COMMENT  = "/*"
 
 	// 1343456
 	// Operators

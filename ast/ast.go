@@ -423,10 +423,16 @@ func (hl *HashLiteral) String() string {
 }
 
 type Comment struct {
-	Token token.Token // the '//' token
+	Token token.Token // the '//' or '/*' token
 	Value string
 }
 
 func (c *Comment) expressionNode()      {}
 func (c *Comment) TokenLiteral() string { return c.Token.Literal }
-func (c *Comment) String() string       { return c.Value }
+func (c *Comment) String() string {
+	if c.Token.Literal == "//" {
+		return "//" + c.Value
+	} else {
+		return "/*" + c.Value + "*/"
+	}
+}

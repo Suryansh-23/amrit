@@ -96,6 +96,23 @@ func (l *Lexer) NextToken() token.Token {
 			}
 
 			return tok
+		} else if l.peekChar() == '*' {
+			l.readChar() //read the '*'
+			l.readChar() //read the next char after '*'
+			tok.Type = token.MULTI_COMMENT
+			tok.Literal = "/*"
+
+			//ignore the rest of the comment
+			for l.ch != '*' && l.peekChar() != '/' {
+				tok.Literal += string(l.ch)
+				l.readChar()
+			}
+
+			l.readChar() //read the '*'
+			l.readChar() //read the '/' after '*'
+			tok.Literal += "*/"
+
+			return tok
 		} else {
 			tok = newToken(token.SLASH, l.ch)
 		}
