@@ -14,12 +14,12 @@ const (
 	LOWEST
 	EQUALS      // ==
 	LESSGREATER // > or <
+	SLICE       // myArray[X:Y]
 	SUM         // +
 	PRODUCT     // *
 	PREFIX      // -X or !X
 	CALL        // myFunction(X)
 	INDEX       // myArray[X]
-	SLICE       // myArray[X:Y]
 )
 
 var precedences = map[token.TokenType]int{
@@ -79,6 +79,7 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerPrefix(token.WHILE_LATIN, p.parseWhileExpression)
 	p.registerPrefix(token.FN_LATIN, p.parseFnLiteral)
 	p.registerPrefix(token.LBRACKET, p.parseArrayLiteral)
+	p.registerPrefix(token.LBRACE, p.parseHashLiteral)
 
 	p.infixParseFns = make(map[token.TokenType]infixParseFn)
 
@@ -541,6 +542,38 @@ func (p *Parser) parseIndexSliceExpression(left ast.Expression) ast.Expression {
 	}
 
 	return exp
+}
+
+func (p *Parser) parseHashLiteral() ast.Expression {
+	hash := &ast.HashLiteral{Token: p.curToken}
+	hash.Pairs = make(map[ast.Expression]ast.Expression)
+
+	for !p.peekTokenIs(token.RBRACE) {
+		p.nextToken()
+
+		slice, ok := p.parseExpression(LOWEST).(*ast.SliceExpression)
+		if !ok {
+			return nil
+		}
+		// if !p.expectPeek(token.COLON) {
+		// 	fmt.Println(p.curToken, p.peekToken, key)
+		// 	return nil
+		// }
+
+		// p.nextToken()
+		// value := p.parseExpression(LOWEST)
+		hash.Pairs[slice.Left] = slice.Right
+
+		if !p.peekTokenIs(token.RBRACE) && !p.expectPeek(token.COMMA) {
+			return nil
+		}
+	}
+
+	if !p.expectPeek(token.RBRACE) {
+		return nil
+	}
+
+	return hash
 }
 
 func (p *Parser) curTokenIs(t token.TokenType) bool {

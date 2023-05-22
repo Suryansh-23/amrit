@@ -6,3 +6,4 @@ mana fib = karya (n) {
     }
 }
 
+print(fib(8))|
