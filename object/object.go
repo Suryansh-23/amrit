@@ -130,7 +130,7 @@ func (f *Function) Inspect() string {
 	return out.String()
 }
 
-type BuiltinFunction func(args ...Object) Object
+type BuiltinFunction func(stdout *[]string, args ...Object) Object
 
 type Builtin struct {
 	Fn BuiltinFunction

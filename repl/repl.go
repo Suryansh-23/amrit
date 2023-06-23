@@ -35,10 +35,15 @@ func Start(in io.Reader, out io.Writer) {
 			continue
 		}
 
-		evaluated := evaluator.Eval(program, env)
+		stdout := []string{}
+		evaluated := evaluator.Eval(program, env, &stdout)
 		if evaluated != nil && evaluated.Type() != object.NULL_OBJ {
 			io.WriteString(out, evaluated.Inspect())
 			io.WriteString(out, "\n")
+		}
+
+		for _, s := range stdout {
+			io.WriteString(out, s)
 		}
 	}
 }
