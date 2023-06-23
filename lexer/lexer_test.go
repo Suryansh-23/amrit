@@ -13,7 +13,7 @@ mana add = karya(x, y) {
 	x + y|
 }|
 mana result = add(five, ten)|
-!-/*5|
+!-/5|
 5 < 10 > 5|
 
 agar (5 < 10) {
@@ -74,7 +74,6 @@ agar (5 < 10) {
 		{token.BANG, "!"},
 		{token.MINUS, "-"},
 		{token.SLASH, "/"},
-		{token.ASTERISK, "*"},
 		{token.INT, "5"},
 		{token.TERM, "|"},
 		{token.INT, "5"},

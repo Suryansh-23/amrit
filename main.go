@@ -60,10 +60,10 @@ func main() {
 			return
 		}
 
-		evaluated := evaluator.Eval(program, env)
-		if evaluated != nil && evaluated.Type() != object.NULL_OBJ {
-			io.WriteString(out, evaluated.Inspect())
-			io.WriteString(out, "\n")
+		stdout := []string{}
+		evaluator.Eval(program, env, &stdout)
+		for _, s := range stdout {
+			io.WriteString(out, s)
 		}
 	}
 }

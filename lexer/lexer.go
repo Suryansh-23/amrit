@@ -103,7 +103,7 @@ func (l *Lexer) NextToken() token.Token {
 			tok.Literal = "/*"
 
 			//ignore the rest of the comment
-			for l.ch != '*' && l.peekChar() != '/' {
+			for l.ch != '*' && l.peekChar() != '/' && l.ch != 0 {
 				tok.Literal += string(l.ch)
 				l.readChar()
 			}
