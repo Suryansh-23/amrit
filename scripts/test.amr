@@ -3,3 +3,5 @@ yeh ek test program hai
 */
 माना k = 90|
 print(k)|   // yeh ek comment hai
+
+print(k % 7)|

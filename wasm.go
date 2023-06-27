@@ -60,6 +60,8 @@ func ReplMode(env *object.Environment, line string) string {
 }
 
 func main() {
+	c := make(chan struct{}, 0)
+
 	fmt.Println("Namaste Duniya🙏🏻, This is the Amrit Programming Language!")
 	env := object.NewEnvironment()
 
@@ -69,4 +71,6 @@ func main() {
 	js.Global().Set("ReplMode", js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 		return ReplMode(env, args[0].String())
 	}))
+
+	<-c
 }

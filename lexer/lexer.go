@@ -124,6 +124,8 @@ func (l *Lexer) NextToken() token.Token {
 		} else {
 			tok = newToken(token.ASTERISK, l.ch)
 		}
+	case '%':
+		tok = newToken(token.MODULO, l.ch)
 	case '<':
 		if l.peekChar() == '=' {
 			ch := l.ch
